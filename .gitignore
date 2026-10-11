@@ -1,4 +1,5 @@
 node_modules/
 dist/
+public/data/assets.json
 *.local
 .DS_Store

@@ -22,10 +22,10 @@ React 19 · Vite · TypeScript · Ant Design 6（暗色主题）
 构建命令会先执行 `scripts/fetch-index.mjs`：
 
 1. 调用 GitHub API 获取 ss-assets 仓库的完整文件树与最新提交
-2. 生成索引文件 `public/data/assets.json`（分类、文件名、体积、版本号）
+2. 生成索引文件 `public/data/assets.json`（分类、文件名、体积、版本号），该文件仅在本地与构建产物中存在，不提交到仓库
 3. 页面运行时加载该索引，图片直接从 jsDelivr 系 CDN 加载（不经过应用服务器）
 
-- 若 API 请求失败，自动回退使用仓库中已提交的旧索引，保证构建不中断
+- 本地重复构建时若 API 请求失败，自动回退使用上一次生成的索引文件
 - 可选环境变量 `GITHUB_TOKEN`：提升 GitHub API 速率限制（建议在 CI 中配置）
 
 ## 本地开发
@@ -52,7 +52,7 @@ npm run preview      # 本地预览构建产物
 
 ```
 ├── scripts/fetch-index.mjs   # 构建时从 GitHub 拉取素材索引
-├── public/data/assets.json   # 生成的索引文件（已提交，作为回退）
+├── public/data/assets.json   # 生成的索引文件（构建时生成，不入库）
 ├── public/favicon.svg
 └── src/
     ├── App.tsx               # 主界面（布局 / 状态 / 过滤逻辑）
