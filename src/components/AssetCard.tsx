@@ -1,5 +1,6 @@
 import { fileUrl } from '../cdn'
 import type { Item } from '../App'
+import { Checkbox } from 'antd'
 
 interface AssetCardProps {
   item: Item
@@ -31,10 +32,17 @@ export default function AssetCard({
         />
       </div>
       {multi && (
-        <span className="check">
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
+        <span
+          className="check"
+          onClick={(e) => {
+            e.stopPropagation()
+            onClick()
+          }}
+        >
+          <Checkbox
+            checked={selected}
+            style={{ pointerEvents: 'none' }}
+          />
         </span>
       )}
       <figcaption>{item.file.n}</figcaption>

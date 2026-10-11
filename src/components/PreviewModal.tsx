@@ -1,7 +1,13 @@
 import { useEffect } from 'react'
 import { fileUrl, formatBytes } from '../cdn'
 import type { Item } from '../App'
-import { IconChevronLeft, IconChevronRight, IconClose, IconCopy, IconDownload } from '../icons'
+import {
+  CopyOutlined,
+  DownloadOutlined,
+  LeftOutlined,
+  RightOutlined,
+} from '@ant-design/icons'
+import { Button, Modal, Space, Tooltip, Typography } from 'antd'
 
 interface PreviewModalProps {
   item: Item
@@ -43,59 +49,71 @@ export default function PreviewModal({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-      else if (e.key === 'ArrowLeft' && hasPrev) onPrev()
+      if (e.key === 'ArrowLeft' && hasPrev) onPrev()
       else if (e.key === 'ArrowRight' && hasNext) onNext()
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [hasPrev, hasNext, onPrev, onNext, onClose])
+  }, [hasPrev, hasNext, onPrev, onNext])
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
-        <img src={url} alt={item.file.n} />
+    <Modal
+      open
+      onCancel={onClose}
+      footer={null}
+      width={1160}
+      centered
+      title={null}
+      closeIcon
+    >
+      <div className="preview-body">
+        <img className="preview-img" src={url} alt={item.file.n} />
         <div className="modal-bar">
-          <span className="modal-name" title={item.rel}>
+          <Typography.Text
+            type="secondary"
+            className="modal-name"
+            title={item.rel}
+            ellipsis
+          >
             {item.rel}
-          </span>
-          <span className="modal-size">{formatBytes(item.file.s)}</span>
+          </Typography.Text>
+          <Typography.Text type="secondary" className="modal-size">
+            {formatBytes(item.file.s)}
+          </Typography.Text>
           <span className="spacer" />
-          <button className="btn" onClick={() => onCopy(url)}>
-            <IconCopy size={14} /> 复制链接
-          </button>
-          <button className="btn" onClick={() => downloadFile(url, item.file.n)}>
-            <IconDownload size={14} /> 下载
-          </button>
-          <button className="btn" onClick={onClose}>
-            <IconClose size={14} /> 关闭
-          </button>
+          <Space wrap>
+            <Button icon={<CopyOutlined />} onClick={() => onCopy(url)}>
+              复制链接
+            </Button>
+            <Button
+              icon={<DownloadOutlined />}
+              onClick={() => downloadFile(url, item.file.n)}
+            >
+              下载
+            </Button>
+          </Space>
         </div>
       </div>
       {hasPrev && (
-        <button
-          className="nav-arrow prev"
-          title="上一个（←）"
-          onClick={(e) => {
-            e.stopPropagation()
-            onPrev()
-          }}
-        >
-          <IconChevronLeft size={20} />
-        </button>
+        <Tooltip title="上一个（←）">
+          <Button
+            className="nav-arrow prev"
+            shape="circle"
+            icon={<LeftOutlined />}
+            onClick={onPrev}
+          />
+        </Tooltip>
       )}
       {hasNext && (
-        <button
-          className="nav-arrow next"
-          title="下一个（→）"
-          onClick={(e) => {
-            e.stopPropagation()
-            onNext()
-          }}
-        >
-          <IconChevronRight size={20} />
-        </button>
+        <Tooltip title="下一个（→）">
+          <Button
+            className="nav-arrow next"
+            shape="circle"
+            icon={<RightOutlined />}
+            onClick={onNext}
+          />
+        </Tooltip>
       )}
-    </div>
+    </Modal>
   )
 }
