@@ -38,7 +38,7 @@ export default function App() {
   const [index, setIndex] = useState<AssetIndex | null>(null)
   const [error, setError] = useState('')
   const [active, setActive] = useState(
-    () => localStorage.getItem(LS_CATEGORY) ?? 'all',
+    () => localStorage.getItem(LS_CATEGORY) ?? '',
   )
   const [query, setQuery] = useState('')
   const [cdnId, setCdnId] = useState<CdnId>(
@@ -60,7 +60,13 @@ export default function App() {
         return r.json()
       })
       .then((d: AssetIndex) => {
-        if (alive) setIndex(d)
+        if (!alive) return
+        setIndex(d)
+        setActive((cur) => {
+          if (cur) return cur
+          const first = d.groups[0]
+          return first ? `${first.type}/${first.category}` : 'all'
+        })
       })
       .catch((e: unknown) => {
         if (alive) setError(e instanceof Error ? e.message : String(e))

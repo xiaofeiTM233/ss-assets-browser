@@ -1,9 +1,42 @@
 :root {
   --muted: #8a93a6;
+  --scrollbar: #2c3441;
+  --scrollbar-hover: #3a4454;
+}
+
+/* ---------- 细窄滚动条 ---------- */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-hover);
 }
 
 body {
+  margin: 0;
   font-size: 14px;
+}
+
+html,
+body,
+#root {
+  height: 100%;
 }
 
 /* ---------- 工具栏 ---------- */
