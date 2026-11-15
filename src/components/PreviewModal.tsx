@@ -77,9 +77,11 @@ export default function PreviewModal({
           >
             {item.rel}
           </Typography.Text>
-          <Typography.Text type="secondary" className="modal-size">
-            {formatBytes(item.file.s)}
-          </Typography.Text>
+          {item.file.s > 0 && (
+            <Typography.Text type="secondary" className="modal-size">
+              {formatBytes(item.file.s)}
+            </Typography.Text>
+          )}
           <span className="spacer" />
           <Space wrap>
             <Button icon={<CopyOutlined />} onClick={() => onCopy(url)}>

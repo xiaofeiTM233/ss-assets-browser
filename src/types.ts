@@ -1,7 +1,7 @@
 export interface AssetFile {
   /** 文件名 */
   n: string
-  /** 字节大小 */
+  /** 字节大小，0 表示来源未提供（git 兜底） */
   s: number
 }
 

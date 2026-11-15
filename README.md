@@ -19,14 +19,15 @@ React 19 · Vite · TypeScript · Ant Design 6（暗色主题）
 
 ## 数据更新机制
 
-构建命令会先执行 `scripts/fetch-index.mjs`：
+构建命令会先执行 `scripts/fetch-index.mjs`，按优先级尝试两个数据来源：
 
-1. 调用 GitHub API 获取 ss-assets 仓库的完整文件树与最新提交
-2. 生成索引文件 `public/data/assets.json`（分类、文件名、体积、版本号），该文件仅在本地与构建产物中存在，不提交到仓库
-3. 页面运行时加载该索引，图片直接从 jsDelivr 系 CDN 加载（不经过应用服务器）
+1. **GitHub REST API**（含文件体积）— 需配置 `GITHUB_TOKEN`。Cloudflare Pages 构建机共享出口 IP，未认证请求极易触发 `403` 限流导致构建失败。
+2. **git 稀疏克隆**（兜底，无需令牌）— 只拉取提交与目录树（约几百 KB），不下载 1GB 图片；此来源不包含文件体积，预览弹窗中不显示大小。
 
-- 本地重复构建时若 API 请求失败，自动回退使用上一次生成的索引文件
-- 可选环境变量 `GITHUB_TOKEN`：提升 GitHub API 速率限制（建议在 CI 中配置）
+无论哪个来源成功，都会生成索引文件 `public/data/assets.json`（分类、文件名、体积、版本号）。该文件仅在本地与构建产物中存在，不提交到仓库。页面运行时加载该索引，图片直接从 jsDelivr 系 CDN 加载（不经过应用服务器）。
+
+- 所有来源均失败时，若本地已有索引则回退使用现有文件
+- 版本号从 ss-assets 最近一次提交信息（如 `chore: update 2.1.0`）解析
 
 ## 本地开发
 
@@ -45,7 +46,9 @@ npm run preview      # 本地预览构建产物
 3. 构建配置：
    - 构建命令：`npm run build`
    - 输出目录：`dist`
-   - 环境变量（可选）：`GITHUB_TOKEN` = GitHub Personal Access Token；`NODE_VERSION` = `22`（仓库已内置 `.node-version`）
+   - 环境变量：
+     - `GITHUB_TOKEN`（推荐）：GitHub Personal Access Token，只需公开仓库只读权限；不配置时构建会走 git 兜底，但索引不含文件体积
+     - `NODE_VERSION` = `22`（仓库已内置 `.node-version`）
 4. 保存后自动部署，此后每次 `git push` 都会拉取最新素材数据并重新构建
 
 ## 目录结构
